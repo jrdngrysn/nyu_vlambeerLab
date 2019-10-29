@@ -11,29 +11,111 @@ using UnityEngine;
 
 public class Pathmaker : MonoBehaviour {
 
-// STEP 2: ============================================================================================
-// translate the pseudocode below
+    // STEP 2: ============================================================================================
+    // translate the pseudocode below
 
-//	DECLARE CLASS MEMBER VARIABLES:
-//	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
-//	Declare a public Transform called floorPrefab, assign the prefab in inspector;
-//	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
+    //	DECLARE CLASS MEMBER VARIABLES:
+    //	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
+    //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
+    //	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
+    private int counter = 0;
+    public static int globalTileCounter = 0;
+    public Transform floorPrefab1;
+    public Transform floorPrefab2;
+    public Transform floorPrefab3;
+    public Transform previousPrefab;
+    public Transform pathMakerSpherePrefab;
+    private GameObject floorParent;
+    private float rightChance;
+    private float leftChance;
+    private float newChance;
+    private int life;
+
+    private void Start()
+    {
+        floorParent = GameObject.Find("FloorParent");
+        rightChance = Random.Range(0.1f, 0.4f);
+        leftChance = Random.Range(rightChance, 0.65f);
+        newChance = Random.Range(.98f, 0.999f);
+        life = Random.Range(45, 100);
+    }
+    void Update () {
+
+        if (counter < life)
+        {
+            float rand = Random.Range(0.0f, 1.0f);
 
 
-	void Update () {
-//		If counter is less than 50, then:
-//			Generate a random number from 0.0f to 1.0f;
-//			If random number is less than 0.25f, then rotate myself 90 degrees;
-//				... Else if number is 0.25f-0.5f, then rotate myself -90 degrees;
-//				... Else if number is 0.99f-1.0f, then instantiate a pathmakerSpherePrefab clone at my current position;
-//			// end elseIf
+            if (rand < rightChance)
+            {
+                this.transform.Rotate(new Vector3(0, 90, 0));
+            }
+            else if (rand < leftChance)
+            {
+                this.transform.Rotate(new Vector3(0, -90, 0));
+            }
+            else if (rand > newChance)
+            {
+                GameObject newPathMakerSphere = Instantiate(pathMakerSpherePrefab.gameObject, this.transform.position, Quaternion.identity);
+                newPathMakerSphere.GetComponent<Pathmaker>().previousPrefab = previousPrefab;
+            }
 
-//			Instantiate a floorPrefab clone at current position;
-//			Move forward ("forward", as in, the direction I'm currently facing) by 5 units;
-//			Increment counter;
-//		Else:
-//			Destroy my game object; 		// self destruct if I've made enough tiles already
-	}
+            if (globalTileCounter <= 500)
+            {
+                Transform currentPrefab = floorPrefab2;
+
+                if (previousPrefab != null)
+                {
+                    float randVis = Random.Range(0.0f, 1.0f);
+
+                    if (randVis < .8f) 
+                    {
+                        currentPrefab = previousPrefab;
+                    } else if (randVis < .89f)
+                    {
+                        currentPrefab = floorPrefab2;
+                    } else if (randVis < .97f)
+                    {
+                        currentPrefab = floorPrefab3;
+                    }
+                    else
+                    {
+                        currentPrefab = floorPrefab1;
+                    }
+                }
+             
+
+                GameObject newFloor = Instantiate(currentPrefab.gameObject, this.transform.position, currentPrefab.transform.rotation, floorParent.transform);
+                previousPrefab = currentPrefab;
+                newFloor.name = "tile" + globalTileCounter.ToString();
+                GameManager.Instance.positionList.Add(newFloor.transform.position);
+                this.transform.Translate(Vector3.forward * 5);
+                counter++;
+                globalTileCounter++;
+            } else
+            {
+                Destroy(this.gameObject);
+            }
+
+        } else
+        {
+            Destroy(this.gameObject);
+        }
+
+
+        //		If counter is less than 50, then:
+        //			Generate a random number from 0.0f to 1.0f;
+        //			If random number is less than 0.25f, then rotate myself 90 degrees;
+        //				... Else if number is 0.25f-0.5f, then rotate myself -90 degrees;
+        //				... Else if number is 0.99f-1.0f, then instantiate a pathmakerSpherePrefab clone at my current position;
+        //			// end elseIf
+
+        //			Instantiate a floorPrefab clone at current position;
+        //			Move forward ("forward", as in, the direction I'm currently facing) by 5 units;
+        //			Increment counter;
+        //		Else:
+        //			Destroy my game object; 		// self destruct if I've made enough tiles already
+    }
 
 } // end of class scope
 
