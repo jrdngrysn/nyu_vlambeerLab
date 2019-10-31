@@ -1,9 +1,14 @@
 ﻿<Properties StartupConfiguration="{120EAB4B-79E7-486A-107E-C12AFF96312C}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GameManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/MusicManager.cs">
     <Files>
-      <File FileName="Assets/scripts/Pathmaker.cs" Line="26" Column="4" />
+      <File FileName="Assets/scripts/Pathmaker.cs" Line="42" Column="24" />
       <File FileName="../../Unity/ProcGen Forray IntrDev Week 7/Assets/FishGod.cs" Line="1" Column="1" />
-      <File FileName="Assets/GameManager.cs" Line="7" Column="27" />
+      <File FileName="Assets/GameManager.cs" Line="22" Column="10" />
+      <File FileName="Assets/FloorScript.cs" Line="24" Column="8" />
+      <File FileName="../../Unity/IntrDevWeek 5/Assets/RoombaController.cs" Line="1" Column="1" />
+      <File FileName="../IntrDevMidterm/IntrDevMidterm/Assets/CursorTriggerCheck.cs" Line="68" Column="13" />
+      <File FileName="../IntrDevMidterm/IntrDevMidterm/Assets/AudioManager.cs" Line="8" Column="5" />
+      <File FileName="Assets/MusicManager.cs" Line="8" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
