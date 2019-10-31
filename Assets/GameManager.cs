@@ -9,21 +9,31 @@ public class GameManager : MonoBehaviour
     public List<Vector3> positionList = new List<Vector3>();
     public List<GameObject> spawnerList = new List<GameObject>();
     public List<GameObject> tileList = new List<GameObject>();
+    public Transform pathMakerSpherePrefab;
     public Camera mainCamera;
     private float total;
     private static int numOfLoads = 0;
     private bool noisePlayed = false;
     private bool doorMade = false;
+    private Vector3 startingPos;
+
+
+    private void Awake()
+    {
+        spawnerList = new List<GameObject>();
+    }
     // Start is called before the first frame update
     void Start()
     {
         Instance = this;
         noisePlayed = false;
         doorMade = false;
-        if (numOfLoads > 0)
-        {
-            GameObject.Find("PathMakerSphere").GetComponent<Pathmaker>().setUpSpawner();
-        }
+        GameObject PathMakerSphere = Instantiate(pathMakerSpherePrefab.gameObject);
+        startingPos = new Vector3(0, 100, 4.1f);
+        //if (numOfLoads > 0)
+        //{
+        //    GameObject.Find("PathMakerSphere(Clone)").GetComponent<Pathmaker>().setUpSpawner();
+        //}
     }
 
     // Update is called once per frame
@@ -39,6 +49,7 @@ public class GameManager : MonoBehaviour
             positionList.Clear();
             spawnerList.Clear();
             numOfLoads++;
+            this.gameObject.transform.position = startingPos;
             SceneManager.LoadScene("mainLabScene");
         }
 
@@ -83,6 +94,7 @@ public class GameManager : MonoBehaviour
 
 
         Vector3 averagePos = new Vector3(0,0,0);
+        Vector2 extremesZ = new Vector2(0, 0);
 
         if (positionList.Count > 0)
         {
@@ -90,17 +102,29 @@ public class GameManager : MonoBehaviour
             {
                 averagePos.x += positionList[i].x;
                 averagePos.z += positionList[i].z;
+
+                if (positionList[i].z < extremesZ.x)
+                {
+                    extremesZ.x = positionList[i].z;
+
+                } else if (positionList[i].z > extremesZ.y)
+                {
+                    extremesZ.y = positionList[i].z;
+                }
+
             }
+            float zVariance = extremesZ.y - extremesZ.x + 1;
             float yPos = mainCamera.transform.position.y;
 
+            //Debug.Log(zVariance);
             if (total < positionList.Count)
             {
 
-                yPos += (positionList.Count >> 2) / 20;
+                yPos += (positionList.Count >> 2) / 30;
 
-                if (yPos > 185)
+                if (yPos > zVariance)
                 {
-                    yPos = 185;
+                    yPos = 50 + zVariance;
                 }
             }
 
@@ -110,7 +134,20 @@ public class GameManager : MonoBehaviour
 
 
 
-            mainCamera.transform.position = new Vector3(averagePos.x, yPos, averagePos.z - (yPos / 3.5f));
+            //mainCamera.transform.position = new Vector3(averagePos.x, yPos, averagePos.z - (yPos / 3.5f));
+            //if (averagePos.z - mainCamera.transform.position.z > .1f || yPos - mainCamera.transform.position.y > .1f)
+            //{
+                mainCamera.transform.position = new Vector3(Lerp(mainCamera.transform.position.x, averagePos.x, .03f),
+                    Lerp(mainCamera.transform.position.y, yPos, .04f), Lerp(mainCamera.transform.position.z, averagePos.z - (yPos / 3.5f), .04f));
+            //}
+
         }
+
+    }
+
+    public static float Lerp(float position, float target, float amount)
+    {
+        float d = (target - position) * amount;
+        return position + d;
     }
 }
